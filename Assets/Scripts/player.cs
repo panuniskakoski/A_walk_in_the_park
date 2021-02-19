@@ -27,11 +27,15 @@ public class player : MonoBehaviour
     public float loveIncreaseAcknowledge;
 
     public float answerTimer;
+    public float setAnswerTimer;
+    public SpriteRenderer questionPopup;
 
-
+    // Aka the player game object
+    public Rigidbody2D playerCouple;
 
     // Tracks weather the bg should scroll or not
     public bool isWalking;
+    public float walkSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -41,11 +45,14 @@ public class player : MonoBehaviour
         loveMeter = GameObject.Find("loveBar").GetComponent<Slider>();
         manHead = GameObject.Find("manHead").GetComponent<Animator>();
         womanHead = GameObject.Find("womanHead").GetComponent<Animator>();
+        playerCouple = GameObject.Find("Player").GetComponent<Rigidbody2D>();
+        questionPopup = GameObject.Find("questionPopup").GetComponent<SpriteRenderer>();
 
         // Set helper variables
         girlsInSight = false;
         gfHasAQuestion = false;
         isWalking = true;
+        walkSpeed = 2.0F;
 
         scDecrease = 0.05F;
         loveDecrease = 0.05F;
@@ -57,8 +64,6 @@ public class player : MonoBehaviour
         loveIncreaseAnswer = 0.05F;
         // Penalty for answering question no one asked
         loveDecreaseAnswer = 0.15F;
-        // How much time has to pass from a question until gf gets upset
-        answerTimer = 3.0F;
 
         // How much love player gets from acknowledging gf
         loveIncreaseAcknowledge = 0.01F;
@@ -67,6 +72,12 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Tracks if player is moving
+        if (scMeter.value > 0)
+        {
+            playerCouple.velocity = transform.right * walkSpeed;
+        }
+
         // If girls are in sight, self control meter (scMeter) goes down gradually
         if (girlsInSight)
         {
@@ -110,7 +121,11 @@ public class player : MonoBehaviour
             // TODO: play mumble sound
             loveMeter.value += loveIncreaseAnswer;
             gfHasAQuestion = false;
+            questionPopup.enabled = false;
         }
+
+        // Checks if there is a question that nees an answer
+        calculateGfMind();
 
         // This changes the mans animator variable as things change
         manHead.SetFloat("scMeter", scMeter.value);
@@ -119,15 +134,29 @@ public class player : MonoBehaviour
         womanHead.SetFloat("loveMeter", loveMeter.value);
     }
 
-    // If man enters a line of sight to other girls
-    void OnCollisionEnter2D(Collision2D collision)
+    // Function that runs each frame if gf has no questions yet
+    void calculateGfMind()
     {
-        if (collision.gameObject.tag == "girls") girlsInSight = true;
+        // Change randomInt to change chances for questions
+        // TODO: Better system for this
+        int randomInt = Random.Range(0, 400);
+        if (!gfHasAQuestion && (randomInt == 5))
+        {
+            gfHasAQuestion = true;
+            questionPopup.enabled = true;
+            setAnswerTimer = answerTimer;
+        }
+    }
+
+    // If man enters a line of sight to other girls
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "girls") girlsInSight = true;
     }
 
     // If man no longer has a line of sight to other girls
-    void OnCollisionExit2D(Collision2D collision)
+    void OnCollisionExit2D(Collision2D other)
     {
-        if (collision.gameObject.tag == "girls") girlsInSight = false;
+        if (other.gameObject.tag == "girls") girlsInSight = false;
     }
 }

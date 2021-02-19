@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\bgLoop.cs" />
     <Compile Include="Assets\Scripts\buttons.cs" />
+    <Compile Include="Assets\Scripts\girl.cs" />
     <Compile Include="Assets\Scripts\player.cs" />
     <Compile Include="Assets\Scripts\script.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
