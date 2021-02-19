@@ -60,9 +60,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\buttons.cs" />
-    <Compile Include="Assets\player.cs" />
-    <Compile Include="Assets\script.cs" />
+    <Compile Include="Assets\Scripts\bgLoop.cs" />
+    <Compile Include="Assets\Scripts\buttons.cs" />
+    <Compile Include="Assets\Scripts\player.cs" />
+    <Compile Include="Assets\Scripts\script.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/Panu/Desktop/Projects/A_walk_in_the_park/A_walk_in_the_park/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
