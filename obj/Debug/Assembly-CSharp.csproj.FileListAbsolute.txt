@@ -234,3 +234,5 @@ C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\obj\Debug\A
 C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\obj\Debug\Assembly-CSharp.dll
 C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.dll
+C:\Users\Panu\Desktop\Projects\A_walk_in_the_park\A_walk_in_the_park\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb

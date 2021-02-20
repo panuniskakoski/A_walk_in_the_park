@@ -24,6 +24,13 @@ public class player : MonoBehaviour
 
     public Animator gameOverText;
 
+    // UI buttons
+    public Button mainMenu;
+    public Button scButton1;
+    public Button scButton2;
+    public Button answerButton;
+    public Button acknowledgeButton;
+
     // Helper variables
     public bool girlsInSight;
     public bool gfHasAQuestion;
@@ -78,7 +85,7 @@ public class player : MonoBehaviour
         isWalking = true;
         walkSpeed = 1.5F;
 
-        scDecrease = 0.10F;
+        scDecrease = 0.12F;
         loveDecrease = 0.15F;
 
         gameOverCheck = false;
@@ -157,41 +164,24 @@ public class player : MonoBehaviour
             loveMeter.value -= loveDecrease * Time.deltaTime;
         }
 
-        // Read player inputs JATKA TÄSTÄ
-        if (Input.GetButtonDown("Return")) SceneManager.LoadScene("MainMenu");
 
-        if (Input.GetButtonDown("scButton1") && !gameOverCheck) scMeter.value += scIncrease;
-        if (Input.GetButtonDown("scButton2") && !gameOverCheck) scMeter.value += scIncrease;
+        // -----------Read player inputs----------------------------------------------------------------------------------------------
+
+        if (Input.GetButtonDown("Return")) Return();
+
+        if (Input.GetButtonDown("scButton1") || Input.GetButtonDown("scButton2")) SelfControlButton();
 
         // If player presses acknowledge button increase self control meter and run animation once
-        // TODO: Add acknowledgement cooldown so animation cannot be spammed
-        if (Input.GetButtonDown("Acknowledge") && !gameOverCheck)
-        {
-            manHead.SetTrigger("Acknowledge");
-            womanHead.SetTrigger("Acknowledge");
-            // TODO: play kissy sound
-            loveMeter.value += loveIncreaseAcknowledge;
-        }
+        if (Input.GetButtonDown("Acknowledge")) Acknowledge();
 
         // If player presses answer button when there is no question decrease love meter and run animation once
-        // TODO: Add answer cooldown so animation cannot be spammed
-        if (Input.GetButtonDown("Answer") && !gfHasAQuestion && !gameOverCheck)
-        {
-            manHead.SetTrigger("Answer");
-            // TODO: play smug mumble sound
-            loveMeter.value -= loveDecreaseAnswer;
-        }
+        if (Input.GetButtonDown("Answer")) AnswerUnaskedQuestion();
 
         // If player presses answer button to answer a question increase love meter and run animation once
-        if (Input.GetButtonDown("Answer") && gfHasAQuestion && !gameOverCheck)
-        {
-            manHead.SetTrigger("Answer");
-            womanHead.SetTrigger("Answer");
-            // TODO: play mumble sound
-            loveMeter.value += loveIncreaseAnswer;
-            gfHasAQuestion = false;
-            questionPopup.enabled = false;
-        }
+        if (Input.GetButtonDown("Answer")) Answer();
+
+        // -----------Read player inputs end here--------------------------------------------------------------------------------------
+
 
         // Checks if there is a question that nees an answer
         if (!gameOverCheck) calculateGfMind();
@@ -222,10 +212,69 @@ public class player : MonoBehaviour
     {
         if (other.gameObject.tag == "girls") girlsInSight = true;
     }
-
     // If man no longer has a line of sight to other girls
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "girls") girlsInSight = false;
+    }
+
+    // Button press functions
+    // ----------------------------------------------------------------------
+    // Returns to main menu
+    public void Return()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    // Restart run
+    public void Restart()
+    {
+        SceneManager.LoadScene("DemoStage");
+    }
+
+    // Adds some points to your scMeter
+    public void SelfControlButton()
+    {
+        if (!gameOverCheck) scMeter.value += scIncrease;
+    }
+
+    // Adds some points to your loveMeter
+    // TODO: Add acknowledgement cooldown so animation cannot be spammed
+    public void Acknowledge()
+    {
+        if (!gameOverCheck)
+        {
+            manHead.SetTrigger("Acknowledge");
+            womanHead.SetTrigger("Acknowledge");
+            // TODO: play kissy sound
+            loveMeter.value += loveIncreaseAcknowledge;
+        }
+    }
+
+    // Answers to a unasked question question
+    // TODO: Add answer cooldown so animation cannot be spammed
+    public void AnswerUnaskedQuestion()
+    {
+        if (!gfHasAQuestion && !gameOverCheck)
+        {
+            manHead.SetTrigger("Answer");
+            // TODO: play smug mumble sound
+            loveMeter.value -= loveDecreaseAnswer;
+        }
+    }
+
+    // Answer to a question
+    // TODO: Add answer cooldown so animation cannot be spammed
+    public void Answer()
+    {
+        if (gfHasAQuestion && !gameOverCheck)
+        {
+            manHead.SetTrigger("Answer");
+            womanHead.SetTrigger("Answer");
+            // TODO: play mumble sound
+            loveMeter.value += loveIncreaseAnswer;
+            gfHasAQuestion = false;
+            questionPopup.enabled = false;
+        }
     }
 }
