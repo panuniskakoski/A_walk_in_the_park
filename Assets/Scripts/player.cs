@@ -19,10 +19,12 @@ public class player : MonoBehaviour
     public SpriteRenderer womanHeadSprite;
     public SpriteRenderer torsos;
 
-    public GameObject manPunch;
+    public GameObject manPunchScDepleted;
+    public GameObject manPunchNoLove;
     public SpriteRenderer womanPunch;
 
     public Animator gameOverText;
+    public Animator youSurvivedText;
 
     // UI buttons
     public Button mainMenu;
@@ -57,11 +59,21 @@ public class player : MonoBehaviour
     public bool isWalking;
     public float walkSpeed;
 
+    public GameObject mainCamera;
+    public GameObject goal;
+
     public bool gameOverCheck;
+    public bool gameWonCheck;
+
+    public ParticleSystem hearts;
 
     // Start is called before the first frame update
     void Start()
     {
+        // Winning conditions
+        mainCamera = GameObject.Find("Main Camera");
+        goal = GameObject.Find("Goal");
+
         // We get all the essential game objects ready
         scMeter = GameObject.Find("scBar").GetComponent<Slider>();
         loveMeter = GameObject.Find("loveBar").GetComponent<Slider>();
@@ -71,13 +83,18 @@ public class player : MonoBehaviour
         manHeadSprite = GameObject.Find("manHead").GetComponent<SpriteRenderer>();
         womanHeadSprite = GameObject.Find("womanHead").GetComponent<SpriteRenderer>();
         torsos = GameObject.Find("walk").GetComponent<SpriteRenderer>();
-        manPunch = GameObject.Find("manPunch");
+        manPunchScDepleted = GameObject.Find("manPunchScDepleted");
+        manPunchNoLove = GameObject.Find("manPunchNoLove");
         womanPunch = GameObject.Find("womanPunch").GetComponent<SpriteRenderer>();
 
         playerCouple = GameObject.Find("Player").GetComponent<Rigidbody2D>();
         questionPopup = GameObject.Find("questionPopup").GetComponent<SpriteRenderer>();
 
         gameOverText = GameObject.Find("gameOverText").GetComponent<Animator>();
+        youSurvivedText = GameObject.Find("youSurvivedText").GetComponent<Animator>();
+
+        hearts = GameObject.Find("Hearts").GetComponent<ParticleSystem>();
+
 
         // Set helper variables
         girlsInSight = false;
@@ -89,6 +106,7 @@ public class player : MonoBehaviour
         loveDecrease = 0.15F;
 
         gameOverCheck = false;
+        gameWonCheck = false;
 
         timer = 0.0F;
         seconds = 0;
@@ -115,9 +133,14 @@ public class player : MonoBehaviour
         }
         else if (scMeter.value < 0.01F || loveMeter.value < 0.01F)
         {
+            // Meters stop decreasing
+            scDecrease = 0;
+            loveDecrease = 0;
+
             // Make sure that meter cannot be manipulated anymore
             if (!gameOverCheck)
             {
+                // Couple stops walking
                 playerCouple.velocity = transform.right * 0;
                 gameOverCheck = true;
 
@@ -128,27 +151,66 @@ public class player : MonoBehaviour
                 torsos.enabled = false;
 
                 // And enables the game over animation
-                manPunch.GetComponent<SpriteRenderer>().enabled = true;
+                if (scMeter.value < 0.01F) manPunchScDepleted.GetComponent<SpriteRenderer>().enabled = true;
+                if (loveMeter.value < 0.01F) manPunchNoLove.GetComponent<SpriteRenderer>().enabled = true;
                 womanPunch.enabled = true;
             }
             // Timer goes off
             timer += Time.deltaTime;
             seconds = (int)(timer % 60);
 
-            // Timing animation transition
+            if (scMeter.value < 0.01F)
+            {
+                // Timing animation transition
+                if (seconds == 1)
+                {
+                    manPunchScDepleted.GetComponent<Animator>().SetTrigger("punched");
+                }
+                if (seconds == 2)
+                {
+                    manPunchScDepleted.GetComponent<Animator>().SetBool("powed", true);
+                    gameOverText.SetTrigger("Float");
+                }
+                if (seconds == 3)
+                {
+                    gameOverText.SetTrigger("Stay");
+                }
+            }
+            else if (loveMeter.value < 0.1F)
+            {
+                // Timing animation transition
+                if (seconds == 1)
+                {
+                    manPunchNoLove.GetComponent<Animator>().SetTrigger("punched");
+                }
+                if (seconds == 2)
+                {
+                    manPunchNoLove.GetComponent<Animator>().SetBool("powed", true);
+                    gameOverText.SetTrigger("Float");
+                }
+                if (seconds == 3)
+                {
+                    gameOverText.SetTrigger("Stay");
+                }
+            }
+        }
+        
+        // If player reaches end
+        if (gameWonCheck)
+        {
+            // Timer goes off
+            timer += Time.deltaTime;
+            seconds = (int)(timer % 60);
+            // Timing text animation transition
             if (seconds == 1)
             {
-                manPunch.GetComponent<Animator>().SetTrigger("punched");
-                scMeter.value = 0.0F;
+                youSurvivedText.SetTrigger("Float");
+                hearts.Play();
             }
             if (seconds == 2)
             {
-                manPunch.GetComponent<Animator>().SetBool("powed", true);
-                gameOverText.SetTrigger("Float");
-            }
-            if (seconds == 3)
-            {
-                gameOverText.SetTrigger("Stay");
+                youSurvivedText.SetTrigger("Stay");
+
             }
         }
 
@@ -185,6 +247,7 @@ public class player : MonoBehaviour
 
         // Checks if there is a question that nees an answer
         if (!gameOverCheck) calculateGfMind();
+        else scDecrease = 0;
 
         // This changes the mans animator variable as things change
         manHead.SetFloat("scMeter", scMeter.value);
@@ -217,6 +280,23 @@ public class player : MonoBehaviour
     {
         if (other.gameObject.tag == "girls") girlsInSight = false;
     }
+    // Goal reached, camera stops here
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        // Camera stops
+        if (other.gameObject.tag == "Goal")
+        {
+            mainCamera.transform.parent = goal.transform;
+            // Meters stop decreasing
+            scDecrease = 0;
+            loveDecrease = 0;
+            loveDecreaseAnswer = 0;
+            scIncrease = 0;
+            loveIncreaseAcknowledge = 0;
+            gameWonCheck = true;
+        }
+    }
+
 
     // Button press functions
     // ----------------------------------------------------------------------

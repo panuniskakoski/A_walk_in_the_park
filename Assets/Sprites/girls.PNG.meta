@@ -19,6 +19,7 @@ TextureImporter:
     21300028: meditationGirl1
     21300030: beachballGirl1
     21300032: beachballGirl2
+    21300034: girls_f
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -425,6 +426,26 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: cfe9204a3d7d6e8419e34c4de3512fe0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: girls_f
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 727
+        width: 340
+        height: 386
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82869fe21c5fa7a4fab1fb7edad32477
       vertices: []
       indices: 
       edges: []
