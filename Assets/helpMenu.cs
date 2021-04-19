@@ -9,6 +9,9 @@ public class helpMenu : MonoBehaviour
     public Button nextButton;
     public Button previousButton;
 
+    public AudioClip click;
+    AudioSource audioS;
+
     public SpriteRenderer slide1;
     public SpriteRenderer slide2;
     public SpriteRenderer slide3;
@@ -54,7 +57,7 @@ public class helpMenu : MonoBehaviour
     // Opens main menu
     public void MainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        StartCoroutine(WaitForAudio());
     }
 
     // Previous tutorial slide
@@ -153,5 +156,12 @@ public class helpMenu : MonoBehaviour
             slide7.enabled = false;
             slide8.enabled = true;
         }
+    }
+
+    // For buttons that change scene
+    public IEnumerator WaitForAudio()
+    {
+        yield return new WaitForSeconds(0.5F);
+        SceneManager.LoadScene("MainMenu");
     }
 }

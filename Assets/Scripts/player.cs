@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 // Script for all player related actions
 public class player : MonoBehaviour
 {
+    // Audio clips
+    public AudioSource audioS;
+    public AudioClip[] sounds;
+
     // Meters that player needs to maintain
     public Slider scMeter;
     public Slider loveMeter;
@@ -129,13 +133,19 @@ public class player : MonoBehaviour
         // Tracks if player is moving
         if (scMeter.value > 0 && loveMeter.value > 0)
         {
+            // Couple is moving
             playerCouple.velocity = transform.right * walkSpeed;
+            // Loop walk audio
+            // TODO
         }
         else if (scMeter.value < 0.01F || loveMeter.value < 0.01F)
         {
             // Meters stop decreasing
             scDecrease = 0;
             loveDecrease = 0;
+
+            // Stop walk audio
+            // TODO
 
             // Make sure that meter cannot be manipulated anymore
             if (!gameOverCheck)
@@ -154,6 +164,8 @@ public class player : MonoBehaviour
                 if (scMeter.value < 0.01F) manPunchScDepleted.GetComponent<SpriteRenderer>().enabled = true;
                 if (loveMeter.value < 0.01F) manPunchNoLove.GetComponent<SpriteRenderer>().enabled = true;
                 womanPunch.enabled = true;
+                // Play womans anger audio
+                // TODO
             }
             // Timer goes off
             timer += Time.deltaTime;
@@ -161,10 +173,14 @@ public class player : MonoBehaviour
 
             if (scMeter.value < 0.01F)
             {
+                // Play mans drool audio
+                // TODO läähpuuh
+
                 // Timing animation transition
                 if (seconds == 1)
                 {
                     manPunchScDepleted.GetComponent<Animator>().SetTrigger("punched");
+                    // TODO punch audio
                 }
                 if (seconds == 2)
                 {
@@ -178,10 +194,14 @@ public class player : MonoBehaviour
             }
             else if (loveMeter.value < 0.1F)
             {
+                // Play man whimpering audio
+                // TODO nononon
+
                 // Timing animation transition
                 if (seconds == 1)
                 {
                     manPunchNoLove.GetComponent<Animator>().SetTrigger("punched");
+                    // TODO punch audio
                 }
                 if (seconds == 2)
                 {
@@ -206,11 +226,14 @@ public class player : MonoBehaviour
             {
                 youSurvivedText.SetTrigger("Float");
                 hearts.Play();
+                // Play love harps audio
+                // TODO
             }
             if (seconds == 2)
             {
                 youSurvivedText.SetTrigger("Stay");
-
+                // Fade out walk audio
+                // TODO AudioFadeOut.FadeOut(audioS, 2.0F);
             }
         }
 
@@ -355,6 +378,23 @@ public class player : MonoBehaviour
             loveMeter.value += loveIncreaseAnswer;
             gfHasAQuestion = false;
             questionPopup.enabled = false;
+        }
+    }
+
+    // Method for fading out audio
+    public static class AudioFadeOut
+    {
+        public static IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+        {
+            float startVolume = audioSource.volume;
+
+            while (audioSource.volume > 0)
+            {
+                audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+                yield return null;
+            }
+            audioSource.Stop();
+            audioSource.volume = startVolume;
         }
     }
 }
